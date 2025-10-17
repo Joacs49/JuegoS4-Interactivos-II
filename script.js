@@ -4,6 +4,32 @@ const ctx = canvas.getContext("2d");
 const bgMusic = document.getElementById("bgMusic");
 const sfxCollision = document.getElementById("sfxCollision");
 sfxCollision.volume = 0.8;
+const bgCanvas = document.getElementById("animated-bg");
+const bgCtx = bgCanvas.getContext("2d");
+
+let bgOffset = 0;
+
+function animateBackground() {
+  bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+  
+  bgCtx.fillStyle = "#111";
+  bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+  bgCtx.strokeStyle = "rgba(50, 50, 100, 0.3)";
+  bgCtx.lineWidth = 2;
+  for (let i = 0; i < 20; i++) {
+    let y = (i * 30 + bgOffset) % (bgCanvas.height + 30);
+    bgCtx.beginPath();
+    bgCtx.moveTo(0, y);
+    bgCtx.lineTo(bgCanvas.width, y);
+    bgCtx.stroke();
+  }
+
+  bgOffset += 0.5;
+  requestAnimationFrame(animateBackground);
+}
+
+animateBackground();
 
 function playSFX(audio) {
   audio.currentTime = 0;
@@ -14,10 +40,16 @@ let keys = {};
 document.addEventListener("keydown", (e) => (keys[e.key] = true));
 document.addEventListener("keyup", (e) => (keys[e.key] = false));
 
-const player = { x: 50, y: 50, w: 30, h: 30, color: "red", speed: 3 };
+const player = { 
+  x: 200,           
+  y: 100,
+  w: 20,            
+  h: 20,
+  color: "green",   
+  speed: 3 
+};
 
 const levels = [
-  // Nivel 1
   {
     obstacles: [
       { x: 100, y: 100, w: 200, h: 20 },
@@ -31,7 +63,6 @@ const levels = [
       { x: 300, y: 250, collected: false },
     ],
   },
-  // Nivel 2
   {
     obstacles: [
       
@@ -47,7 +78,6 @@ const levels = [
       { x: 300, y: 260, collected: false },
     ],
   },
-  // Nivel 3
   {
     obstacles: [
       { x: 100, y: 80, w: 400, h: 20 },
@@ -71,7 +101,6 @@ const levels = [
       { x: 150, y: 370, collected: false },
     ],
   },
-  // Nivel 4
   {
     obstacles: [
       { x: 0, y: 0, w: 600, h: 20 },
@@ -128,13 +157,11 @@ function update() {
   if (keys["ArrowLeft"]) player.x -= player.speed;
   if (keys["ArrowRight"]) player.x += player.speed;
 
-  // Límites del escenario
   if (player.x < 0) player.x = 0;
   if (player.x + player.w > canvas.width) player.x = canvas.width - player.w;
   if (player.y < 0) player.y = 0;
   if (player.y + player.h > canvas.height) player.y = canvas.height - player.h;
 
-  // Colisión con obstáculos → REINICIAR NIVEL
   for (let obs of level.obstacles) {
     if (rectsCollide(player, obs)) {
       resetLevel();
@@ -145,13 +172,12 @@ function update() {
       ctx.fillStyle = "red";
       ctx.font = "24px Arial";
       ctx.fillText("¡CUIDADO!", canvas.width / 2 - 60, canvas.height / 2);
-      setTimeout(() => { draw(); }, 1000); // Redibuja para borrar el texto
+      setTimeout(() => { draw(); }, 1000);
 
       break;
     }
   }
 
-  // Recoger monedas
   for (let coin of level.coins) {
     if (!coin.collected) {
       if (
@@ -165,7 +191,6 @@ function update() {
     }
   }
 
-  // Completar nivel
   const allCollected = level.coins.every((c) => c.collected);
   if (allCollected) {
     if (currentLevel < levels.length - 1) {
@@ -195,6 +220,8 @@ function resetLevel() {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  player.color = currentLevel === 0 ? "green" : "red";
   drawRect(player);
 
   const level = levels[currentLevel];
@@ -222,7 +249,6 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
 }
 
-// Inicializar juego
 resetLevel();
 bgMusic.src = "sounds/nivel1.mp3";
 bgMusic.load();

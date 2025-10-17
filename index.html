@@ -5,35 +5,57 @@
     <title>Juego S4</title>
     <style>
       body {
-      margin: 0;
-      background: #111;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      font-family: sans-serif;
-      color: white;
-    }
+        margin: 0;
+        background: #111;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        font-family: sans-serif;
+        color: white;
+      }
 
-    canvas {
-      border: 3px solid #fff;
-      background: #222;
-      margin-bottom: 10px;
-    }
+      canvas {
+        border: 3px solid #fff;
+        margin-bottom: 10px;
+      }
 
-    footer {
-      font-size: 14px;
-      padding: 10px;
-      text-align: center;
-    }
+      .canvas-container {
+        position: relative;
+        margin-bottom: 10px;
+      }
+
+      footer {
+        font-size: 14px;
+        padding: 10px;
+        text-align: center;
+      }
+
+      #game {
+        border: 3px solid #fff;
+      }
+
+      #animated-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: -1;
+      }
     </style>
   </head>
   <body>
-    <canvas id="game" width="600" height="400"></canvas>
+    <div class="canvas-container">
+      <canvas id="animated-bg" width="600" height="400"></canvas>
+      <canvas id="game" width="600" height="400"></canvas>
+    </div>
+
     <footer>Joaquin Muñoz</footer>
+
     <audio id="bgMusic" loop></audio>
     <audio id="sfxCollision" src="sounds/boing.mp3"></audio>
+
     <script src="script.js"></script>
   </body>
 </html>
